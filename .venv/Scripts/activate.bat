@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=U:\E3\Python\projet-dashboard-python\.venv
+set VIRTUAL_ENV=U:\Lina-Tefiniaina-Dashboard-Python\projet-dashboard-python\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

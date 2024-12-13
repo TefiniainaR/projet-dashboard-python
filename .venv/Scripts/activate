@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="U:\E3\Python\projet-dashboard-python\.venv"
+VIRTUAL_ENV="U:\Lina-Tefiniaina-Dashboard-Python\projet-dashboard-python\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
