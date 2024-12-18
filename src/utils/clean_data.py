@@ -1,14 +1,5 @@
 import pandas as pd
-
-file_path = r'data\raw\rawdata.csv' #relative path
-
-def get_data_from_csv(file_path):
-    # Charger le fichier CSV dans un DataFrame pandas
-    df = pd.read_csv(file_path, sep=',', encoding='utf-8')
-    
-    # Retourner le DataFrame pour utilisation dans d'autres parties de votre code
-    return df
-
+from src.utils.get_data import get_data_from_csv
 
 def clean_data(df_defined):
     """
@@ -46,16 +37,3 @@ def clean_data(df_defined):
     df_defined.reset_index(drop=True, inplace=True)
     
     return df_defined
-
-#commentaire test commit
-
-def test_clean_data():
-    df_tested = get_data_from_csv(file_path)
-    df_cleaned= clean_data(df_tested)
-    print(df_cleaned)
-
-    assert df_cleaned.isnull().sum().sum()==0, "Il reste des valeurs manquantes"
-    assert len(df_cleaned)==1999," Le nombre de lignes après suppresion des doublons"
-    print("test passé avec succés")
-
-test_clean_data()
