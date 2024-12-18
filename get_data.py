@@ -1,5 +1,7 @@
 import pandas as pd
 
+
+#TEST
 file_path = r'data\raw\rawdata.csv'
 def get_data_from_csv(file_path):
     # Charger le fichier CSV dans un DataFrame pandas
@@ -46,6 +48,7 @@ def clean_data(df_defined):
     df_defined.reset_index(drop=True, inplace=True)
     
     return df_defined
+
 #commentaire test commit
 
 def test_clean_data():
