@@ -1,5 +1,16 @@
 import pandas as pd
-from src.utils.get_data import get_data_from_csv
+
+
+#TEST
+file_path = r'data\raw\rawdata.csv'
+def get_data_from_csv(file_path):
+    # Charger le fichier CSV dans un DataFrame pandas
+    df = pd.read_csv(file_path, sep=',', encoding='utf-8')
+    
+    # Retourner le DataFrame pour utilisation dans d'autres parties de votre code
+    return df
+
+
 
 def clean_data(df_defined):
     """
