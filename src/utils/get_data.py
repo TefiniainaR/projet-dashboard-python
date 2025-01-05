@@ -1,6 +1,6 @@
 import pandas as pd
 
-file_path = r'data\raw\rawdata.csv' #relative path
+file_path = 'data/raw/rawdata.csv' #relative path
 
 def get_data_from_csv(file_path):
     # Charger le fichier CSV dans un DataFrame pandas

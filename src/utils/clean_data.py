@@ -1,7 +1,8 @@
+
 import pandas as pd
 from src.utils.get_data import get_data_from_csv
 
-file_path = r'data\raw\rawdata.csv'
+file_path = 'data/raw/rawdata.csv'
 
 def clean_data(df_defined):
     """

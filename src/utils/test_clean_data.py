@@ -1,6 +1,9 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from src.utils.get_data import get_data_from_csv
-from src.utils.get_data import clean_data
-
+from src.utils.clean_data import clean_data
+file_path='data/raw/rawdata.csv'
 def test_clean_data():
     df_tested = get_data_from_csv(file_path)
     df_cleaned= clean_data(df_tested)

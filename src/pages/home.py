@@ -3,80 +3,116 @@ from dash import dcc, html
 import plotly.express as px
 import pandas as pd
 from dash.dependencies import Input, Output
+import datetime
 
-file_path = r'data\raw\rawdata.csv'
-# Charger vos données (par exemple, depuis un CSV nettoyé)
+# Charger les données (assurez-vous que votre fichier CSV est bien accessible)
+file_path = 'data/raw/rawdata.csv'
 df = pd.read_csv(file_path)
+
+# Coordonnées géographiques pour chaque ville (exemple)
+city_coords = {
+    "Visakhapatnam": (17.6868, 83.2185),
+    "Bangalore": (12.9716, 77.5946),
+    "Srinagar": (34.0837, 74.7973),
+    "Varanasi": (25.3216, 82.9876),
+    "Jaipur": (26.9124, 75.7873),
+    "Pune": (18.5204, 73.8567),
+    "Thane": (19.2183, 72.9784),
+    "Chennai": (13.0827, 80.2707),
+    "Nagpur": (21.1458, 79.0882),
+    "Ahmedabad": (23.0225, 72.5714),
+    # Ajoutez d'autres villes ici...
+}
+
+# Ajouter les colonnes de latitude et longitude
+df['latitude'] = df['City'].map(lambda city: city_coords.get(city, (None, None))[0])
+df['longitude'] = df['City'].map(lambda city: city_coords.get(city, (None, None))[1])
+
+# Filtrer les données pour enlever les villes sans coordonnées
+df_geo = df.dropna(subset=['latitude', 'longitude'])
 
 # Créer l'application Dash
 app = dash.Dash(__name__)
 
-# Exemple de graphique : Histogramme sur une variable
-fig_histogram = px.histogram(df, x='variable_name', title="Histogramme")
+# Histogramme : Distribution des niveaux de dépression
+fig_histogram = px.histogram(df, x='Depression', title="Distribution des Niveaux de Dépression chez les Étudiants", labels={'Depression': 'Dépression (0 = Non, 1 = Oui)'}, color='Gender',  category_orders={'Depression': [0, 1]})  # Catégoriser les valeurs de dépression
 
-# Exemple de graphique de tendance : graphique linéaire sur le temps
-fig_trend = px.line(df, x='date_column', y='value_column', title="Tendance au fil du temps")
+fig_histogram.update_layout(bargap=0.2) 
 
-# Définir la mise en page de la page d'accueil
+# Carte géospatiale : Répartition géographique de la dépression
+fig_map = px.scatter_geo(df_geo, lat='latitude', lon='longitude', hover_name='City',color='Depression', size='Age', title="Répartition Géospatiale de la Dépression chez les Étudiants",color_continuous_scale='Viridis', size_max=20)
+
+# Limiter la carte à l'Inde et configurer les options de projection
+fig_map.update_geos(
+    projection_type="natural earth",  # Utilisation de la projection naturelle
+    scope="asia",  # Limiter la carte à l'Asie (ou spécifiquement à l'Inde si vous le souhaitez)
+)
+
+fig_map.update_layout(title="Carte Géospatiale des Étudiants en Fonction de la Dépression")
+
+# Correction d'erreur: DatePickerRange 
+
+# Trouver le min et le max dans la colomne 'Age' : 
+min_age = df['Age'].min()
+max_age = df['Age'].max()
+
+# Convertir la valeur numérique en chaîne de caractères : 
+
+current_year = datetime.datetime.now().year    # Définir l'année actuelle
+
+# Créer les bonnes valeurs de départ et de fin (remplacer les ages par des années de naissance)
+start_year = current_year - max_age  
+end_year = current_year - min_age    
+
+# Mettre au bon format 'YYYY-MM-DD' 
+start_date = f"{start_year}-01-01"
+end_date = f"{end_year}-12-31"
+
+# Ensure start_date and end_date are in the correct string format
+start_date = str(start_date)  # Ensure it's a string
+end_date = str(end_date)      # Ensure it's a string
+
+# Définir la mise en page de l'application Dash
 app.layout = html.Div([
-    html.H1("DashBoard sur la Dépression chez les étudiants"),
+    html.H1("Dashboard sur la Dépression chez les Étudiants"),
+    
+    # Ajouter l'histogramme de dépression
     html.Div([
-        dcc.Graph(figure=fig_histogram),
-        dcc.Graph(figure=fig_trend),
+        dcc.Graph(figure=fig_histogram)
     ]),
+    
+    # Ajouter la carte géospatiale
+    html.Div([
+        dcc.Graph(figure=fig_map)
+    ]),
+    
+    # Section des filtres interactifs
     html.Div([
         html.H3("Filtres interactifs"),
         dcc.Dropdown(
             id='region-dropdown',
-            options=[{'label': region, 'value': region} for region in df['region'].unique()],
-            value=df['region'].unique()[0],
+            options=[{'label': region, 'value': region} for region in df['City'].unique()],
+            value=df['City'].unique()[0],
             multi=False
         ),
-        dcc.DatePickerRange(
-            id='date-picker',
-            start_date=df['date_column'].min(),
-            end_date=df['date_column'].max(),
-            display_format='YYYY-MM-DD'
-        )
+        dcc.Dropdown(
+            id='age-dropdown',
+            options=[{'label': age, 'value': age} for age in df['Age'].unique()],
+            value=df['Age'].unique()[0],
+            multi=False
+        ),
     ])
 ])
 
-# Charger les données géospatiales
-df_map = pd.read_csv(file_path)
-
-# Créer une carte géospatiale
-fig_map = px.scatter_geo(df_map, lat='latitude', lon='longitude', hover_name='city',
-                         color='region', size='population', projection="natural earth")
-fig_map.update_layout(title="Carte Géospatiale Interactif")
-
-# Créer l'application Dash
-app = dash.Dash(__name__)
-
-# Mise en page avec la carte et les graphiques
-app.layout = html.Div([
-    html.H1("Page d'Accueil - Dashboard Interactif"),
-    html.Div([
-        dcc.Graph(figure=fig_map),  # Carte géospatiale
-    ]),
-])
-
-# Exécution du serveur
-if __name__ == "__main__":
-    app.run_server(debug=True)
-
-
-# Callbacks pour interactivité
+# Callbacks pour l'interactivité (si nécessaire, à adapter selon votre logique)
 @app.callback(
     Output('region-dropdown', 'value'),
     [Input('region-dropdown', 'value')]
 )
 def update_region(value):
-    # Vous pouvez mettre à jour les graphiques ou d'autres éléments en fonction du filtre
+    # Logique pour filtrer ou mettre à jour des graphiques selon la sélection de la région
     return value
 
-# Exécution du serveur
+# Exécution du serveur Dash
 if __name__ == "__main__":
     app.run_server(debug=True)
-
-
-
