@@ -57,7 +57,8 @@ df['Have you ever had suicidal thoughts ?'] = df['Have you ever had suicidal tho
 # Graphique en secteur : Proportion de personnes ayant des pensées suicidaires
 fig_pie = px.pie(df, names='Have you ever had suicidal thoughts ?', title="Proportion de Personnes Ayant des Pensées Suicidaires",color='Have you ever had suicidal thoughts ?', color_discrete_map={0: 'lightgreen', 1: 'red'}, labels={'Have you ever had suicidal thoughts ?': 'Pensées Suicidaires (0 = Non, 1 = Oui)'})
 
-
+# Nuage de points : 
+fig_nuage = px.scatter(df, x='Financial Stress', y='CGPA',color='Depression', size='Age',title="Stress Financier vs CGPA",labels={'Financial Stress': 'Stress Financier', 'CGPA': 'CGPA'})
 # Correction d'erreur: DatePickerRange 
 
 # Trouver le min et le max dans la colomne 'Age' : 
@@ -92,6 +93,9 @@ app.layout = html.Div([
     
     #Ajouter le pie chart
     html.Div([dcc.Graph(figure=fig_pie)]),
+
+    # Ajouter le nuage de points 
+    html.Div([dcc.Graph(figure=fig_nuage)]),
 
     # Section des filtres interactifs
     html.Div([
