@@ -34,6 +34,7 @@ df_geo = df.dropna(subset=['latitude', 'longitude'])
 # Créer l'application Dash
 app = dash.Dash(__name__)
 
+
 # Histogramme : Distribution des niveaux de dépression
 fig_histogram = px.histogram(df, x='Depression', title="Distribution des Niveaux de Dépression chez les Étudiants", labels={'Depression': 'Dépression (0 = Non, 1 = Oui)'}, color='Gender',  category_orders={'Depression': [0, 1]})  # Catégoriser les valeurs de dépression
 
@@ -49,6 +50,13 @@ fig_map.update_geos(
 )
 
 fig_map.update_layout(title="Carte Géospatiale des Étudiants en Fonction de la Dépression")
+
+# Conversion des valeurs "Yes" et "No" en 1 et 0
+df['Have you ever had suicidal thoughts ?'] = df['Have you ever had suicidal thoughts ?'].map({'Yes': 1, 'No': 0})
+
+# Graphique en secteur : Proportion de personnes ayant des pensées suicidaires
+fig_pie = px.pie(df, names='Have you ever had suicidal thoughts ?', title="Proportion de Personnes Ayant des Pensées Suicidaires",color='Have you ever had suicidal thoughts ?', color_discrete_map={0: 'lightgreen', 1: 'red'}, labels={'Have you ever had suicidal thoughts ?': 'Pensées Suicidaires (0 = Non, 1 = Oui)'})
+
 
 # Correction d'erreur: DatePickerRange 
 
@@ -77,15 +85,14 @@ app.layout = html.Div([
     html.H1("Dashboard sur la Dépression chez les Étudiants"),
     
     # Ajouter l'histogramme de dépression
-    html.Div([
-        dcc.Graph(figure=fig_histogram)
-    ]),
+    html.Div([dcc.Graph(figure=fig_histogram)]),
     
     # Ajouter la carte géospatiale
-    html.Div([
-        dcc.Graph(figure=fig_map)
-    ]),
+    html.Div([dcc.Graph(figure=fig_map)]),
     
+    #Ajouter le pie chart
+    html.Div([dcc.Graph(figure=fig_pie)]),
+
     # Section des filtres interactifs
     html.Div([
         html.H3("Filtres interactifs"),
