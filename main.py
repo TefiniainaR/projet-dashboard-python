@@ -9,6 +9,7 @@ from src.components.map import fig_map
 from src.components.pie import fig_pie
 from src.components.nuage import fig_nuage
 
+
 # Charger les données (assurez-vous que votre fichier CSV est bien accessible)
 file_path = 'data/cleaned/cleaned_data.csv'
 df = pd.read_csv(file_path)
@@ -72,7 +73,20 @@ app.layout = html.Div([
             value=df['age'].unique()[0],
             multi=False
         ),
-    ])
+    ]),
+    html.Div([
+        html.H1("Tableau de bord interactif"),
+
+        # Menu de navigation
+        dcc.Link('Page d\'accueil', href='/'),
+        html.Br(),
+        dcc.Link('À propos', href='/about'),
+        html.Hr(),
+
+        # Contenu qui change selon la page
+        dcc.Location(id='url', refresh=False),
+        html.Div(id='page-content'),
+    ]),
 ])
 
 # Callbacks pour l'interactivité (si nécessaire, à adapter selon votre logique)
@@ -84,6 +98,21 @@ def update_region(value):
     # Logique pour filtrer ou mettre à jour des graphiques selon la sélection de la région
     return value
 
-# Exécution du serveur Dash
-if __name__ == "__main__":
+# Affichage des différentes pages (home et about)
+
+def display_page(pathname):
+    if pathname == '/about':
+        return html.Div([
+            html.H1("À propos de ce projet"),
+            html.P("Ce projet est un tableau de bord interactif permettant de visualiser des données géospatiales et statistiques."),
+            html.P("Les données sont analysées et présentées sous forme de graphiques interactifs et de cartes géospatiales."),
+        ])
+    # Par défaut, afficher une page d'accueil
+    return html.Div([
+        html.H1("Page d'Accueil"),
+        html.P("Bienvenue sur le tableau de bord ! Choisissez une page à partir du menu de navigation."),
+    ])
+
+# Exécution du serveur
+if __name__ == '__main__':
     app.run_server(debug=True)
