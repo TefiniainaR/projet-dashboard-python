@@ -7,7 +7,7 @@ from dash.dependencies import Input, Output
 import datetime
 
 # Charger les données (assurez-vous que votre fichier CSV est bien accessible)
-file_path = 'data/raw/rawdata.csv'
+file_path = 'data/cleaned/cleaned_data.csv'
 df = pd.read_csv(file_path)
 
 # Coordonnées géographiques pour chaque ville (exemple)
