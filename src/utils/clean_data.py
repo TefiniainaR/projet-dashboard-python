@@ -77,6 +77,12 @@ def clean_data():
     
     # Réindexation après suppression des lignes
     df.reset_index(drop=True, inplace=True)
+
+    # Vérifier si la colonne existe et convertir les valeurs "Yes" et "No" en 1 et 0
+    if 'have you ever had suicidal thoughts ?' in df.columns:
+        df['have you ever had suicidal thoughts ?'] = df['have you ever had suicidal thoughts ?'].map({'Yes': 1, 'No': 0})
+    else:
+        print("La colonne 'have you ever had suicidal thoughts ?' n'existe pas dans le DataFrame.")
     
     # Sauvegarde du DataFrame nettoyé dans un fichier CSV
     output_csv = os.path.join(output_dir, "cleaned_data.csv")
