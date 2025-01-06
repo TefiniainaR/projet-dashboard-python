@@ -17,6 +17,9 @@ def clean_data(df_defined):
     df : pandas.DataFrame
         Le DataFrame nettoyé.
     """
+    #output_dir = 'data\cleaned'
+    #os.makedirs(output_dir, exist_ok=True)
+
     df_defined = get_data_from_csv(file_path)
     
     # Suppression des valeurs manquantes
@@ -62,4 +65,7 @@ def clean_data(df_defined):
     # Réindexation après suppression des lignes
     df.reset_index(drop=True, inplace=True)
     
+    #output_csv = os.path.join(output_dir, "cleaned_data.csv")
+    #df.to_csv(output_csv, index=False, encoding='utf-8')
+    #print(f"La data frame nettoyée et souvegardée sous '{output_csv}'.")
     return df
