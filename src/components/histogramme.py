@@ -15,3 +15,5 @@ fig_histogram = px.histogram(df, x='depression', title="Distribution des Niveaux
                               category_orders={'depression': [0, 1]})  # Catégoriser les valeurs de dépression
 
 fig_histogram.update_layout(bargap=0.2) 
+
+

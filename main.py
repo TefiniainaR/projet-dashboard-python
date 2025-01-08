@@ -1,118 +1,151 @@
 import dash
 from dash import dcc, html
-import plotly.express as px
-import pandas as pd
 from dash.dependencies import Input, Output
+import pandas as pd
+import plotly.express as px
 import datetime
 from src.components.histogramme import fig_histogram
 from src.components.map import fig_map
 from src.components.pie import fig_pie
 from src.components.nuage import fig_nuage
+from src.pages.home import home_layout
+from src.pages.about import about_layout
 
 
-# Charger les données (assurez-vous que votre fichier CSV est bien accessible)
 file_path = 'data/cleaned/cleaned_data.csv'
 df = pd.read_csv(file_path)
-
-# Nettoyer les noms de colonnes : retirer les espaces et convertir en minuscules
 df.columns = df.columns.str.strip().str.lower()
 
+app = dash.Dash(__name__, suppress_callback_exceptions=True)
+server = app.server
 
-# Vérifier si la colonne existe et convertir les valeurs "Yes" et "No" en 1 et 0
-if 'have you ever had suicidal thoughts ?' in df.columns:
-    df['have you ever had suicidal thoughts ?'] = df['have you ever had suicidal thoughts ?'].map({'Yes': 1, 'No': 0})
-else:
-    print("La colonne 'have you ever had suicidal thoughts ?' n'existe pas dans le DataFrame.")
-
-# Créer l'application Dash
-app = dash.Dash(__name__)
-
-# Trouver le min et le max dans la colonne 'age' :
-min_age = df['age'].min()
-max_age = df['age'].max()
-
-# Convertir la valeur numérique en chaîne de caractères : 
-current_year = datetime.datetime.now().year  # Définir l'année actuelle
-
-# Créer les bonnes valeurs de départ et de fin (remplacer les ages par des années de naissance)
-start_year = current_year - max_age  
-end_year = current_year - min_age    
-
-# Format 'YYYY-MM-DD' 
-start_date = f"{start_year}-01-01"
-end_date = f"{end_year}-12-31"
-
-# Définition de la mise en page de l'application Dash
 app.layout = html.Div([
-    html.H1("Dashboard sur la Dépression chez les Étudiants"),
-    
-    # Histogramme de dépression
-    html.Div([dcc.Graph(figure=fig_histogram)]),
-    
-    # Carte géospatiale
-    html.Div([dcc.Graph(figure=fig_map)]),
-    
-    # Graphique en secteur (Pie chart)
-    html.Div([dcc.Graph(figure=fig_pie)]),
-
-    # Nuage de points 
-    html.Div([dcc.Graph(figure=fig_nuage)]),
-
-    # Filtres interactifs
+    dcc.Location(id='url', refresh=False),
     html.Div([
-        html.H3("Filtres interactifs"),
-        dcc.Dropdown(
-            id='region-dropdown',
-            options=[{'label': region, 'value': region} for region in df['city'].unique()],
-            value=df['city'].unique()[0],
-            multi=False
-        ),
-        dcc.Dropdown(
-            id='age-dropdown',
-            options=[{'label': age, 'value': age} for age in df['age'].unique()],
-            value=df['age'].unique()[0],
-            multi=False
-        ),
-    ]),
-    html.Div([
-        html.H1("Tableau de bord interactif"),
-
-        # Menu de navigation
-        dcc.Link('Page d\'accueil', href='/'),
-        html.Br(),
-        dcc.Link('À propos', href='/about'),
-        html.Hr(),
-
-        # Contenu qui change selon la page
-        dcc.Location(id='url', refresh=False),
-        html.Div(id='page-content'),
-    ]),
+        dcc.Link('Accueil', href='/home'),
+        html.Span(" | "),
+        dcc.Link('Nos Graphes', href='/'),
+        html.Span(" | "),
+        dcc.Link('à Propos', href='/about'),
+    ], style={'padding': '10px', 'background-color': '#f2f2f2'}),
+    html.Hr(),
+    html.Div(id='page-content')
 ])
 
-# Callbacks pour l'interactivité (si nécessaire, à adapter selon votre logique)
-@app.callback(
-    Output('region-dropdown', 'value'),
-    [Input('region-dropdown', 'value')]
-)
-def update_region(value):
-    # Logique pour filtrer ou mettre à jour des graphiques selon la sélection de la région
-    return value
-
-# Affichage des différentes pages (home et about)
-
+@app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/about':
+        return about_layout
+    elif pathname == '/home':
+        return home_layout
+    else:
         return html.Div([
-            html.H1("À propos de ce projet"),
-            html.P("Ce projet est un tableau de bord interactif permettant de visualiser des données géospatiales et statistiques."),
-            html.P("Les données sont analysées et présentées sous forme de graphiques interactifs et de cartes géospatiales."),
+            html.H1("Dashboard sur la Dépression chez les Étudiants"),
+            html.Div([
+                html.H3("Sélectionner une plage d'âge"),
+                dcc.RangeSlider(
+                    id='age-range-slider',
+                    min = int(df['age'].min()), 
+                    max = int(df['age'].max()),  
+                    step = 1,        
+                    marks = {i : str(i) for i in range(int(df['age'].min()), int(df['age'].max()) + 1, 5)},  
+                    value = [int(df['age'].min()), int(df['age'].max())],  
+                ),
+            ], style={'padding': '10px'}),
+            html.Div([
+                html.H3("Sélectionner une ville"),
+                dcc.Dropdown(
+                    id='region-dropdown',
+                    options = [{'label': region, 'value': region} for region in df['city'].unique()],
+                    value = df['city'].unique().tolist(),  
+                    multi=True,
+                ),
+            ], style = {'padding': '10px'}),
+            html.Div([
+                html.H2("Histogramme"),
+                dcc.Graph(id='histogramme-graph', figure = fig_histogram),
+            ]),
+            html.Div([
+                html.H2("Carte géospatiale"),
+                dcc.Graph(id='map-graph', figure = fig_map),
+            ]),
+            html.Div([
+                html.H2("Graphique en secteurs"),
+                dcc.Graph(id = 'pie-graph', figure = fig_pie)
+            ]),
+            html.Div([
+                html.H2("Nuage de points"),
+                dcc.Graph(id = 'nuage-graph', figure = fig_nuage)
+            ]),
         ])
-    # Par défaut, afficher une page d'accueil
-    return html.Div([
-        html.H1("Page d'Accueil"),
-        html.P("Bienvenue sur le tableau de bord ! Choisissez une page à partir du menu de navigation."),
-    ])
 
-# Exécution du serveur
+@app.callback(
+    [Output('histogramme-graph', 'figure'),
+     Output('pie-graph', 'figure'),
+     Output('nuage-graph', 'figure'),
+     Output('map-graph', 'figure')],
+    [Input('region-dropdown', 'value'),
+     Input('age-range-slider', 'value')]  
+)
+def update_graphs_by_region_and_age(regions, age_range):
+    """Met à jour chaque graphique après un choix de ville ou une tranche d'âge"""
+
+    # Si aucune ville n'est sélectionnée, on affiche toutes les villes
+    if not regions:
+        regions = df['city'].unique().tolist()  # Afficher toutes les villes si aucune n'est sélectionnée
+    
+    if age_range is None:
+        age_range = [int(df['age'].min()), int(df['age'].max())]  
+
+    filtered_df = df[(df['city'].isin(regions)) & 
+                     (df['age'] >= age_range[0]) & 
+                     (df['age'] <= age_range[1])]
+
+    fig_histogram_filtered = px.histogram(
+        filtered_df,
+        x='depression', 
+        title="Distribution des Niveaux de Dépression",
+        labels={'depression': 'Dépression (0 = Non, 1 = Oui)'},
+        color ='gender',
+        category_orders={'depression': [0, 1]}
+    )
+    fig_histogram_filtered.update_layout(bargap = 0.2)
+
+    fig_pie_filtered = px.pie(
+        filtered_df,
+        names='have you ever had suicidal thoughts ?',
+        title="Proportion de Personnes Ayant des Pensées Suicidaires",
+        color='have you ever had suicidal thoughts ?',
+        color_discrete_map={0: 'lightgreen', 1: 'red'},
+        labels={'have you ever had suicidal thoughts ?': 'Pensées Suicidaires (0 = Non, 1 = Oui)'}
+    )
+
+    fig_nuage_filtered = px.scatter(
+        filtered_df,
+        x='financial stress',
+        y='cgpa',
+        color='depression',
+        size='age',
+        title="Stress Financier vs CGPA",
+        labels={'financial stress': 'Stress Financier', 'cgpa': 'CGPA'}
+    )
+
+    fig_map_filtered = px.scatter_geo(
+        filtered_df,
+        lat ='latitude',
+        lon ='longitude',
+        hover_name ='city',
+        color ='depression',
+        size ='age',
+        title ="Répartition Géospatiale de la Dépression",
+        color_continuous_scale ='Viridis',
+        size_max=20
+    )
+    fig_map_filtered.update_geos(projection_type="natural earth", scope="asia")
+
+    return fig_histogram_filtered, fig_pie_filtered, fig_nuage_filtered, fig_map_filtered
+
+
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=8051)
