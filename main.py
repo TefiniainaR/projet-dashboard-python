@@ -27,7 +27,15 @@ app.layout = html.Div([
         dcc.Link('Nos Graphes', href='/'),
         html.Span(" | "),
         dcc.Link('à Propos', href='/about'),
-    ], style={'padding': '10px', 'background-color': '#f2f2f2'}),
+    ], style={
+    'padding': '20px',
+    'font-family': 'Arial, sans-serif',
+    'background-color': '#f9f9f9',
+    'border-radius': '8px',
+    'box-shadow': '0 2px 4px rgba(0, 0, 0, 0.1)',
+    'max-width': '800px',
+    'margin': 'auto'
+}),
     html.Hr(),
     html.Div(id='page-content')
 ])
