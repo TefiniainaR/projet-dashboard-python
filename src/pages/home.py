@@ -1,6 +1,8 @@
 import dash
 from dash import html
 
+# Définition de la mise en page « Accueil »
+
 home_layout = html.Div([
     html.H1("Bienvenue sur notre DashBoard"),
     html.H2("Étude sur la dépression chez les étudiants en Inde"),

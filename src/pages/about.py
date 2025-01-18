@@ -1,6 +1,8 @@
 import dash
 from dash import html
 
+# Définition de la mise en page « À propos »
+
 about_layout = html.Div([
     html.H1("À propos de ce projet"),
     

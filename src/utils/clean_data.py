@@ -13,7 +13,7 @@ def clean_data():
     conversion des types de données et suppression des doublons.
     
     Arguments:
-    Aucun argument n'est nécessaire, le fichier CSV est chargé directement dans la fonction.
+    Aucun argument car les données (fichier CSV) sont chargées dans la fonction.
         
     Retourne:
     df : pandas.DataFrame
@@ -84,12 +84,12 @@ def clean_data():
     else:
         print("La colonne 'have you ever had suicidal thoughts ?' n'existe pas dans le DataFrame.")
     
-    # Sauvegarde du DataFrame nettoyé dans un fichier CSV
+    # Sauvegarde du DataFrame nettoyé dans un fichier CSV cleaned_data
     output_csv = os.path.join(output_dir, "cleaned_data.csv")
     df.to_csv(output_csv, index=False, encoding='utf-8')
     print(f"Data saved to {output_csv}")
 
     return df
 
-# Appel de la fonction pour nettoyer les données
+# Appel de la fonction 
 cleaned_df = clean_data()

@@ -40,8 +40,21 @@ app.layout = html.Div([
     html.Div(id='page-content')
 ])
 
+
+
 @app.callback(Output('page-content', 'children'), [Input('url', 'pathname')])
 def display_page(pathname):
+
+    """
+    Détermine le contenu de la page à afficher en fonction de l'URL.
+
+    Args:
+        pathname (str): Chemin de l'URL actuelle.
+
+    Returns:
+        html.Div: Mise en page correspondant à l'URL.
+    """
+
     if pathname == '/about':
         return about_layout
     elif pathname == '/home':
@@ -96,7 +109,20 @@ def display_page(pathname):
      Input('age-range-slider', 'value')]  
 )
 def update_graphs_by_region_and_age(regions, age_range):
-    """Met à jour chaque graphique après un choix de ville ou une tranche d'âge"""
+    """
+    Met à jour les graphiques en fonction des régions sélectionnées et de la plage d'âge.
+
+    Args:
+        regions (list): Liste des villes sélectionnées.
+        age_range (list): Plage d'âge sélectionnée sous la forme [min, max].
+
+    Returns:
+        tuple: Contient les graphiques mis à jour, incluant :
+            - Histogramme
+            - Graphique en secteurs
+            - Nuage de points
+            - Carte géospatiale
+    """
 
     # Si aucune ville n'est sélectionnée, on affiche toutes les villes
     if not regions:
@@ -111,11 +137,11 @@ def update_graphs_by_region_and_age(regions, age_range):
 
     fig_histogram_filtered = px.histogram(
         filtered_df,
-        x='depression', 
-        title="Distribution des Niveaux de Dépression",
-        labels={'depression': 'Dépression (0 = Non, 1 = Oui)'},
-        color ='gender',
-        category_orders={'depression': [0, 1]}
+        x='age', 
+        title="Distribution des Âges des Étudiants", 
+        labels={'age': 'Âge'}, 
+        color='gender', 
+        nbins=10
     )
     fig_histogram_filtered.update_layout(bargap = 0.2)
 
