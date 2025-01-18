@@ -56,6 +56,7 @@ Ce fichier CSV est un [dataset](https://www.kaggle.com/datasets/hopesb/student-d
 
 Le projet est organisé de la manière suivante (diagramme réalisé sur Mermaid) : 
 
+![Mon Image](images/diagram.png)
 
 
 ## Rapport d'analyse
