@@ -11,8 +11,8 @@ Assurez-vous que Python 3.7 ou une version ultérieure est installée sur votre 
 
 1. **Cloner le dépôt** :
    ```bash
-   git clone https://github.com/<votre-utilisateur>/<nom-du-repo>.git
-   cd <nom-du-repo>
+   git clone https://github.com/TefiniainaR/projet-dashboard-python.git
+   cd <projet-dashboard-python>
 
 2. **Créer un environnement virtuel** :
    ```bash
@@ -58,6 +58,17 @@ Le projet est organisé de la manière suivante (diagramme réalisé sur Mermaid
 
 ![Mon Image](images/diagram.png)
 
+### Ajouter une page ou un graphique
+
+Pour ajouter une nouvelle page :
+- Créez un fichier Python dans src/pages/ 
+- Implémentez la mise en page en utilisant les composants Dash.
+- Ajoutez un lien vers cette page dans la navigation principale.
+
+Pour ajouter un nouveau graphique :
+- Créez un fichier Python dans src/components/ 
+- Implémentez la logique pour générer le graphique avec Plotly ou Dash.
+- Intégrez ce graphique dans l'une des pages existantes.
 
 ## Rapport d'analyse
 
