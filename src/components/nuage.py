@@ -5,7 +5,7 @@ import pandas as pd
 from dash.dependencies import Input, Output
 import datetime
 
-# Charger les données (assurez-vous que votre fichier CSV est bien accessible)
+# Chargement des données
 file_path = 'data/cleaned/cleaned_data.csv'
 df = pd.read_csv(file_path)
 
