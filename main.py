@@ -3,7 +3,6 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
-import datetime
 from src.components.histogramme import fig_histogram
 from src.components.map import fig_map
 from src.components.pie import fig_pie
