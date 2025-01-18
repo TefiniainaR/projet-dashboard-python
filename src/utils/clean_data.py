@@ -1,7 +1,4 @@
 import os
-import sys
-import pandas as pd
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 from get_data import get_data_from_csv
 
 # Chemin du fichier brut

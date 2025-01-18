@@ -1,4 +1,3 @@
-import dash
 from dash import html
 
 # Définition de la mise en page « À propos »
